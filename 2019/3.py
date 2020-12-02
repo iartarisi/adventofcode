@@ -26,7 +26,6 @@ def mark_step(matrix, x, y, sign):
     else:
         matrix[x][y] = 'X'
 
-
 def extend_for(matrix, x, y):
     if y < 0:
         add_column_left(matrix)
@@ -41,6 +40,20 @@ def extend_for(matrix, x, y):
 
     return x, y
 
+def make_step(direction, length, x, y):
+    dirs = {
+        'R': ('-', lambda x, y: (x, y + 1)),
+        'U': ('|', lambda x, y: (x + 1, y)),
+        'L': ('-', lambda x, y: (x, y - 1)),
+        'D': ('|', lambda x, y: (x - 1, y)),
+    }
+    sign, funcxy = dirs[direction]
+    for i in range(length):
+        x, y = funcxy(x, y)
+        x, y = extend_for(matrix, x, y)
+        mark_step(matrix, x, y, sign)
+
+    return x, y
 
 def draw_line(matrix, steps):
     x, y = origin
@@ -49,42 +62,17 @@ def draw_line(matrix, steps):
         print(x, y)
         direction, length = step[0], int(step[1:])
 
-        if direction == 'R':
-            for i in range(length):
-                y += 1
-                x, y = extend_for(matrix, x, y)
-
-                mark_step(matrix, x, y, '-')
-        elif direction == 'U':
-            for i in range(length):
-                x += 1
-                x, y = extend_for(matrix, x, y)
-
-                mark_step(matrix, x, y, '|')
-        elif direction == 'L':
-            for i in range(length):
-                y -= 1
-                x, y = extend_for(matrix, x, y)
-
-                mark_step(matrix, x, y, '-')
-        elif direction == 'D':
-            for i in range(length):
-                x -= 1
-                x, y = extend_for(matrix, x, y)
-
-                mark_step(matrix, x, y, '|')
-
-        matrix[x][y]
+        x, y = make_step(direction, length, x, y)
 
 
-wire1 = 'R8,U5,L5,D3' #',L5,D3'
+wire1 = 'R8,U5,L5,D3'
 wire2 = 'U7,R6,D4,L4'
 
 # wire1 = 'R75,D30,R83,U83,L12,D49,R71,U7,L72'
 # wire2 = 'U62,R66,U55,R34,D71,R55,D58,R83'
 
-wire1 = 'U2,L5,U2,R3'
-wire2 = 'R7,D2'
+# wire1 = 'U2,L5,U2,R3'
+# wire2 = 'R7,D2'
 
 matrix = [['o']]
 origin = [0, 0]
