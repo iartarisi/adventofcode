@@ -1,28 +1,39 @@
 from collections import defaultdict
 
-# def draw_one(matrix, x, y, sign):
-#     if matrix[x][y]
-def add_line(matrix):
+
+def add_line_above(matrix):
     columns = len(matrix[0])
     matrix.append(['.']*columns)
 
-def add_column(matrix):
+def add_column_right(matrix):
     for l in matrix:
         l.append('.')
 
+def add_column_left(matrix):
+    for l in matrix:
+        l.insert(0, '.')
+    origin[1] = origin[1] + 1
+
+def add_line_below(matrix):
+    columns = len(matrix[0])
+    new_line = ['.'] * columns
+    matrix.insert(0, new_line)
+    origin[0] = origin[0] + 1
+
 def draw_line(matrix, steps):
-    x, y = (0, 0)
+    x, y = origin
     for step in steps.split(','):
         print(step)
         print(x, y)
         direction, length = step[0], int(step[1:])
+
         if direction == 'R':
             for i in range(length):
                 y += 1
                 try:
                     matrix[x][y]
                 except IndexError:
-                    add_column(matrix)
+                    add_column_right(matrix)
 
                 if matrix[x][y] == '.':
                     matrix[x][y] = '-'
@@ -30,12 +41,11 @@ def draw_line(matrix, steps):
                     matrix[x][y] = 'X'
         elif direction == 'U':
             for i in range(length):
-                # assume that the left side has been drawn
                 x += 1
                 try:
                     matrix[x]
                 except IndexError:
-                    add_line(matrix)
+                    add_line_above(matrix)
 
                 if matrix[x][y] == '.':
                     matrix[x][y] = '|'
@@ -43,14 +53,22 @@ def draw_line(matrix, steps):
                     matrix[x][y] = 'X'
         elif direction == 'L':
             for i in range(length):
-                y -= 1
+                if y == 0:
+                    add_column_left(matrix)
+                else:
+                    y -= 1
+
                 if matrix[x][y] == '.':
                     matrix[x][y] = '-'
                 else:
                     matrix[x][y] = 'X'
         elif direction == 'D':
             for i in range(length):
-                x -= 1
+                if x == 0:
+                    add_line_below(matrix)
+                else:
+                    x -= 1
+
                 if matrix[x][y] == '.':
                     matrix[x][y] = '|'
                 else:
@@ -58,12 +76,19 @@ def draw_line(matrix, steps):
 
         matrix[x][y]
 
+
 wire1 = 'R8,U5,L5,D3' #',L5,D3'
 wire2 = 'U7,R6,D4,L4'
 
-wire1 = 'R75,D30,R83,U83,L12,D49,R71,U7,L72'
-wire2 = 'U62,R66,U55,R34,D71,R55,D58,R83'
+# wire1 = 'R75,D30,R83,U83,L12,D49,R71,U7,L72'
+# wire2 = 'U62,R66,U55,R34,D71,R55,D58,R83'
+
+# wire1 = 'U2,L5,U2,R3'
+# wire2 = 'R7,D2'
+
 matrix = [['o']]
+origin = [0, 0]
+
 draw_line(matrix, wire1)
 draw_line(matrix, wire2)
 
