@@ -27,6 +27,21 @@ def mark_step(matrix, x, y, sign):
         matrix[x][y] = 'X'
 
 
+def extend_for(matrix, x, y):
+    if y < 0:
+        add_column_left(matrix)
+        y = 0
+    elif x < 0:
+        add_line_below(matrix)
+        x = 0
+    if x + 1 > len(matrix):
+        add_line_above(matrix)
+    elif y + 1 > len(matrix[x]):
+        add_column_right(matrix)
+
+    return x, y
+
+
 def draw_line(matrix, steps):
     x, y = origin
     for step in steps.split(','):
@@ -37,35 +52,25 @@ def draw_line(matrix, steps):
         if direction == 'R':
             for i in range(length):
                 y += 1
-                try:
-                    matrix[x][y]
-                except IndexError:
-                    add_column_right(matrix)
+                x, y = extend_for(matrix, x, y)
 
                 mark_step(matrix, x, y, '-')
         elif direction == 'U':
             for i in range(length):
                 x += 1
-                try:
-                    matrix[x]
-                except IndexError:
-                    add_line_above(matrix)
+                x, y = extend_for(matrix, x, y)
 
                 mark_step(matrix, x, y, '|')
         elif direction == 'L':
             for i in range(length):
-                if y == 0:
-                    add_column_left(matrix)
-                else:
-                    y -= 1
+                y -= 1
+                x, y = extend_for(matrix, x, y)
 
                 mark_step(matrix, x, y, '-')
         elif direction == 'D':
             for i in range(length):
-                if x == 0:
-                    add_line_below(matrix)
-                else:
-                    x -= 1
+                x -= 1
+                x, y = extend_for(matrix, x, y)
 
                 mark_step(matrix, x, y, '|')
 
@@ -78,8 +83,8 @@ wire2 = 'U7,R6,D4,L4'
 # wire1 = 'R75,D30,R83,U83,L12,D49,R71,U7,L72'
 # wire2 = 'U62,R66,U55,R34,D71,R55,D58,R83'
 
-# wire1 = 'U2,L5,U2,R3'
-# wire2 = 'R7,D2'
+wire1 = 'U2,L5,U2,R3'
+wire2 = 'R7,D2'
 
 matrix = [['o']]
 origin = [0, 0]
