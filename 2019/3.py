@@ -20,6 +20,13 @@ def add_line_below(matrix):
     matrix.insert(0, new_line)
     origin[0] = origin[0] + 1
 
+def mark_step(matrix, x, y, sign):
+    if matrix[x][y] == '.':
+        matrix[x][y] = sign
+    else:
+        matrix[x][y] = 'X'
+
+
 def draw_line(matrix, steps):
     x, y = origin
     for step in steps.split(','):
@@ -35,10 +42,7 @@ def draw_line(matrix, steps):
                 except IndexError:
                     add_column_right(matrix)
 
-                if matrix[x][y] == '.':
-                    matrix[x][y] = '-'
-                else:
-                    matrix[x][y] = 'X'
+                mark_step(matrix, x, y, '-')
         elif direction == 'U':
             for i in range(length):
                 x += 1
@@ -47,10 +51,7 @@ def draw_line(matrix, steps):
                 except IndexError:
                     add_line_above(matrix)
 
-                if matrix[x][y] == '.':
-                    matrix[x][y] = '|'
-                else:
-                    matrix[x][y] = 'X'
+                mark_step(matrix, x, y, '|')
         elif direction == 'L':
             for i in range(length):
                 if y == 0:
@@ -58,10 +59,7 @@ def draw_line(matrix, steps):
                 else:
                     y -= 1
 
-                if matrix[x][y] == '.':
-                    matrix[x][y] = '-'
-                else:
-                    matrix[x][y] = 'X'
+                mark_step(matrix, x, y, '-')
         elif direction == 'D':
             for i in range(length):
                 if x == 0:
@@ -69,10 +67,7 @@ def draw_line(matrix, steps):
                 else:
                     x -= 1
 
-                if matrix[x][y] == '.':
-                    matrix[x][y] = '|'
-                else:
-                    matrix[x][y] = 'X'
+                mark_step(matrix, x, y, '|')
 
         matrix[x][y]
 
