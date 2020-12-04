@@ -1,21 +1,6 @@
 from copy import deepcopy
 import re
 
-batchfile = """
-ecl:gry pid:860033327 eyr:2020 hcl:#fffffd
-byr:1937 iyr:2017 cid:147 hgt:183cm
-
-iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884
-hcl:#cfa07d byr:1929
-
-hcl:#ae17e1 iyr:2013
-eyr:2024
-ecl:brn pid:760753108 byr:1931
-hgt:179cm
-
-hcl:#cfa07d eyr:2025 pid:166559648
-iyr:2011 ecl:brn hgt:59in
-"""
 
 def validate_hgt(hgt):
     try:
@@ -38,30 +23,13 @@ validators = {
     'pid': lambda x: re.fullmatch('[0-9]{9}', x),
 }
 
-def split_passports(input):
-    return input.split('\n\n')
-
 def count_valid(input):
     count = 0
-    for passport in split_passports(input):
-        valids = deepcopy(validators)
-        fields = re.findall("(\w+):(\S+)", passport)
-        # print('passport: ', passport, '\n')
-        for key, value in fields:
-            if key == 'cid':
-                continue
-            try:
-                validator = valids.pop(key)
-            except KeyError:
-                break
-
-            if not validator(value):
-                # print('invalid ', key, value)
-                break
-        else:
-            if not valids:
-                print('passport: ', passport)
-                count += 1
+    for passport in input.split('\n\n'):
+        count += sum(
+            bool(validators[key](value))
+            for key, value in re.findall("(\w+):(\S+)", passport)
+            if key != 'cid') == len(validators)
     return count
 
 
