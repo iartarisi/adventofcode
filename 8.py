@@ -1,4 +1,4 @@
-example = """nop +0
+example = """nip +0
 acc +1
 jmp +4
 acc +3
@@ -9,15 +9,19 @@ jmp -4
 acc +6"""
 
 
-def execute(inp):
-    acc = 0
-    executed = set()
+def load_instructions(inp):
     instructions = []
     for instruction in inp:
         operation, argument = instruction.split()
         argument = int(argument)
         instructions.append((operation, argument))
 
+    return instructions
+
+
+def execute(instructions):
+    acc = 0
+    executed = set()
 
     i = 0
     while i not in executed:
@@ -35,10 +39,16 @@ def execute(inp):
             i += argument
             continue
 
+    print(i)
+    if i == len(instructions) - 1:
+        return True, acc
+    else:
+        return False, acc
 
 
-    return acc
+instructions = load_instructions(example.splitlines())
+execute(instructions)
 
-execute(example.splitlines())
 with open('8.input') as f:
-    print(execute(f.readlines()))
+    instructions = load_instructions(f.readlines())
+    print(execute(instructions))
