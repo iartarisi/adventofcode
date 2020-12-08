@@ -1,4 +1,6 @@
-example = """nip +0
+from copy import deepcopy
+
+example = """nop +0
 acc +1
 jmp +4
 acc +3
@@ -26,7 +28,13 @@ def execute(instructions):
     i = 0
     while i not in executed:
         executed.add(i)
-        (operation, argument) = instructions[i]
+        try:
+            operation, argument = instructions[i]
+        except IndexError:
+            if i == len(instructions):
+                return True, acc
+            else:
+                return False, acc
 
         if operation == 'nop':
             i += 1
@@ -39,16 +47,29 @@ def execute(instructions):
             i += argument
             continue
 
-    print(i)
-    if i == len(instructions) - 1:
-        return True, acc
-    else:
-        return False, acc
+    return False, acc
+
+def switch_and_find(instructions, o1, o2):
+    for i, (operation, argument) in enumerate(instructions):
+        if operation == o1:
+            insts = deepcopy(instructions)
+            insts[i] = (o2, argument)
+            success, acc = execute(insts)
+
+            if success:
+                return acc
+
 
 
 instructions = load_instructions(example.splitlines())
-execute(instructions)
+# execute(instructions)
 
 with open('8.input') as f:
     instructions = load_instructions(f.readlines())
-    print(execute(instructions))
+
+print(instructions)
+
+
+print(execute(instructions))
+print(switch_and_find(instructions, 'nop', 'jmp'))
+print(switch_and_find(instructions, 'jmp', 'nop'))
