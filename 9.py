@@ -38,8 +38,21 @@ def find_impostor(lines, preamble_size):
         preamble.append(n)
 
 
+def find_contiguous(lines, number):
+    seen = []
+    for i in lines:
+        i = int(i)
+        seen.append(i)
+        while sum(seen) > number:
+            seen.pop(0)
+        if sum(seen) == number:
+            return min(seen) + max(seen)
 
-print(find_impostor(test_input.splitlines(), 5))
+
+# print(find_impostor(test_input.splitlines(), 5))
+# with open('9.input') as f:
+#     find_impostor(f.readlines(), 25)
+
+print(find_contiguous(test_input.splitlines(), 127))
 with open('9.input') as f:
-    find_impostor(f.readlines(), 25)
-
+     print(find_contiguous(f.readlines(), 144381670))
