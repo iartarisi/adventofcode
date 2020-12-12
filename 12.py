@@ -15,12 +15,12 @@ directions = {
 directions_order = 'NESW'
 
 
-def navigate(turns):
+def navigate(steps):
     facing = 'E'
     x = 0
     y = 0
-    for turn in turns:
-        action, value = turn[0], turn[1:]
+    for step in steps:
+        action, value = step[0], step[1:]
         value = int(value)
 
         if action == 'F':
@@ -44,7 +44,46 @@ def navigate(turns):
 
     return abs(x) + abs(y)
 
-navigate(example.splitlines())
+
+def navigate_waypoint(steps, waypoint=(10, 1)):
+    x = 0
+    y = 0
+
+    for step in steps:
+        print(x, y, waypoint)
+
+        action, value = step[0], step[1:]
+        value = int(value)
+
+        if action == 'F':
+            x += value*waypoint[0]
+            y += value*waypoint[1]
+            continue
+
+        try:
+            movex, movey = directions[action]
+        except KeyError:
+            pass
+        else:
+            movex, movey = movex*value, movey*value
+            waypoint = (waypoint[0] + movex, waypoint[1] + movey)
+            continue
+
+        if action == 'R':
+            turns = value // 90
+            for i in range(turns):
+                waypoint = (waypoint[1], waypoint[0] * -1)
+            continue
+        elif action == 'L':
+            turns = value // 90
+            for i in range(turns):
+                waypoint = (waypoint[1] * -1, waypoint[0])
+            continue
+
+    print(x, y, waypoint)
+    return abs(x) + abs(y)
+
+navigate_waypoint(example.splitlines())
 
 with open('12.input') as f:
-    print(navigate(f.readlines()))
+    print(navigate_waypoint(f.readlines()))
