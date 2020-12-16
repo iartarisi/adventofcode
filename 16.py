@@ -14,6 +14,18 @@ nearby tickets:
 55,2,20
 38,6,12"""
 
+example2 = """class: 0-1 or 4-19
+row: 0-5 or 8-19
+seat: 0-13 or 16-19
+
+your ticket:
+11,12,13
+
+nearby tickets:
+3,9,18
+15,1,5
+5,14,9"""
+
 
 def collect_valid_values(line):
     valid_ranges = re.match('.*: (\d+)-(\d+) or (\d+)-(\d+)', line).groups()
@@ -24,6 +36,17 @@ def collect_valid_values(line):
 
 def collect_invalids(valids, line):
     return [int(i) for i in line.split(',') if int(i) not in valids]
+
+
+def all_valid(valids, line):
+    for i in line.split(','):
+        i = int(i)
+        for v in valids:
+            if i in v:
+                break
+        else:
+            return False
+    return True
 
 
 def process_input(lines):
@@ -60,8 +83,31 @@ def silver(lines):
 
     return sum(invalid)
 
-silver(example.splitlines())
 
-with open('16.input') as f:
-    print(silver(f.readlines()))
+def process_gold(lines):
+    valid_ranges = []
+    myticket = []
+    valid_tickets = []
+    section = valid_ranges.append
+    func = lambda x: valid_ranges.append(collect_valid_values(x))
+    for line in lines:
+        line = line.strip()
+        if line in ['', '\n']:
+            continue
 
+        if line == 'your ticket:':
+            func = lambda x: myticket.extend(int(i) for i in x.split(','))
+            continue
+        if line == 'nearby tickets:':
+            func = lambda x: valid_tickets.append(line) if all_valid(valid_ranges, line) else None
+            continue
+        func(line)
+
+    return valid_ranges, myticket, valid_tickets
+
+# silver(example.splitlines())
+
+# with open('16.input') as f:
+#     print(silver(f.readlines()))
+
+process_gold(example.splitlines())
